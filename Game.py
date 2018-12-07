@@ -23,7 +23,7 @@ class Game:
             return -2
         if self.board[theInput//3][theInput%3] == 0:
             self.board[theInput//3][theInput%3] = self.curPlayer
-            self.moveHistory.append(theInput)
+            self.moveHistory.append(theInput+1)
             return 1
         else:
             return -1

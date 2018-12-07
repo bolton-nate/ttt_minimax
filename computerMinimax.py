@@ -1,7 +1,6 @@
 from random import randint, seed
-global fc
 
-def minimax(newGame, rootPlayer, game):
+def minimax(newGame, game):
     global fc
     fc += 1
     game.masterFC += 1
@@ -9,10 +8,10 @@ def minimax(newGame, rootPlayer, game):
     empties = newGame.getEmpties()
     # print("fc:", fc, " empties: ", empties)
 
-    if newGame.checkForWinner() == rootPlayer:
+    if newGame.checkForWinner() == game.curPlayer:
         # print("fc:", fc, " player win return 10")
         return -1, 100
-    elif newGame.checkForWinner() == rootPlayer % 2 + 1:
+    elif newGame.checkForWinner() == game.curPlayer % 2 + 1:
         # print("fc:", fc, " other player win return -10")
         return -1, -100
     elif not empties:
@@ -24,7 +23,7 @@ def minimax(newGame, rootPlayer, game):
     for i in range(len(empties)):
         newGame.move(empties[i])
         newGame.curPlayer = newGame.curPlayer % 2 + 1
-        result = minimax(newGame, rootPlayer, game)
+        result = minimax(newGame, game)
         moves.append(empties[i])
         scores.append(result[1])
         # print("fc:", fc, " moves array: ", moves)
@@ -34,7 +33,7 @@ def minimax(newGame, rootPlayer, game):
         newGame.curPlayer = newGame.curPlayer % 2 + 1
 
     bestMove = None
-    if newGame.curPlayer == rootPlayer:
+    if newGame.curPlayer == game.curPlayer:
         bestScore = -10000
         for i in range(len(moves)):
             if scores[i] > bestScore:
@@ -48,7 +47,7 @@ def minimax(newGame, rootPlayer, game):
                 bestScore = scores[i]
                 # print("fc: ", fc, "Min bestScore now: ", bestScore)
                 bestMove = moves[i]
-    # print("fc:", fc, " returning bestmove: ", bestMove)
+    # print("fc:", fc, " returning bestmove/bestscore: ", bestMove, bestScore)
     return bestMove, bestScore
 
 
@@ -64,7 +63,7 @@ def computerMinimax(game):
         # myMove = [0, None]
         myMove = [randint(0, 8), None]
     else:
-        myMove = minimax(newGame, newGame.curPlayer, game)
+        myMove = minimax(newGame, game)
     # print("My minimax move:", myMove[0]+1)
     game.move(myMove[0])
     # print(minimax(game, 0))

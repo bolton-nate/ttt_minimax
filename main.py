@@ -6,18 +6,23 @@ from userInput import *
 from computerInput import *
 from computerRandom import *
 from computerMinimax import *
+from computerAlphaBeta import *
 from Game import *
 totalFC = 0
 
 def main():
     global totalFC
     seriesResults = [0, 0, 0] # ties, count of player1 wins, player2 wins
-
-    print("Welcome To Tic Tac Toe")
-    player1Name = input("Player 1, input your name, or c (RULES AI), r (RANDOM AI), m (MINIMAX AI):  ")
-    player2Name = input("Player 2, input your name, or c (RULES AI), r (RANDOM AI), m (MINIMAX AI):  ")
-    if player1Name in ['c', 'r', 'm'] and player2Name in ['c', 'r', 'm']:
-        repeatGames = int(input("How many games would you like the AI to play:  "))
+    player1Name = player2Name = None
+    print("\n\nWelcome To Tic Tac Toe\n")
+    while player1Name not in ['h', 'H', '1', '2', '3', '4']:
+        print("Player 1, please select player type:\nh: HUMAN PLAYER\n1: RULES AI\n2: RANDOM AI\n3: MINIMAX AI\n4: ALPHA BETA AI\n")
+        player1Name = input("Choose:")
+    while player2Name not in ['h', 'H', '1', '2', '3', '4']:
+        print("\nPlayer 2, please select player type:\nh: HUMAN PLAYER\n1: RULES AI\n2: RANDOM AI\n3: MINIMAX AI\n4: ALPHA BETA AI\n")
+        player2Name = input("Choose:")
+    if player1Name in ['1', '2', '3', '4'] and player2Name in ['1', '2', '3', '4']:
+        repeatGames = int(input("\nHow many games would you like the AI to play:  "))
         while repeatGames < 1:
             repeatGames = int(input("Please select 1 or more games.  How many games would you like the AI to play:  "))
     else:
@@ -28,38 +33,40 @@ def main():
         while ttt.winnerVar == 0:
             if not ttt.getEmpties():
                 seriesResults[0] += 1
-                if repeatGames < 2:
-                    print("GAME OVER")
-                    print("Tie Game. Nobody Wins.")
-                    print(ttt.drawTheBoard())
-                print("game#:", sum(seriesResults))
-                print("Number of calls to the minimax algorithm for this game:", ttt.masterFC)
-                print(ttt.moveHistory)
-                print("winner: ", ttt.winnerVar, "\n\n")
+                print("\nGAME OVER")
+                print("Tie Game. Nobody Wins.")
+                print("Number of minimax calls for game #", sum(seriesResults), ": ", ttt.masterFC, sep="")
+                print("Move History:", ttt.moveHistory)
+                print("Final Board:\n", ttt.drawTheBoard(), "\n", sep="")
+
                 totalFC += ttt.masterFC
                 del ttt
                 break
             if repeatGames < 2:
-                print("Player " + str(ttt.curPlayer) + "'s Turn")
+                print("\nPlayer " + str(ttt.curPlayer) + "'s Turn")
                 print("The Current Board Is:")
                 print(ttt.drawTheBoard())
 
             if ttt.curPlayer == 1:
-                if player1Name.lower() == "c":
+                if player1Name.lower() == "1":
                     computerPlayer(ttt)
-                elif player1Name.lower() == "r":
+                elif player1Name.lower() == "2":
                     computerRandom(ttt)
-                elif player1Name.lower() == "m":
+                elif player1Name.lower() == "3":
                     computerMinimax(ttt)
+                elif player1Name.lower() == "4":
+                    computerAlphaBeta(ttt)
                 else:
                     userInput(ttt)
             else:
-                if player2Name.lower() == "c":
+                if player2Name.lower() == "1":
                     computerPlayer(ttt)
-                elif player2Name.lower() == "r":
+                elif player2Name.lower() == "2":
                     computerRandom(ttt)
-                elif player2Name.lower() == "m":
+                elif player2Name.lower() == "3":
                     computerMinimax(ttt)
+                elif player2Name.lower() == "4":
+                    computerAlphaBeta(ttt)
                 else:
                     userInput(ttt)
 
@@ -67,22 +74,20 @@ def main():
             # print winnerVar
             if ttt.winnerVar != 0:
                 seriesResults[ttt.curPlayer] += 1
-                if (ttt.curPlayer == 1 and player1Name.lower() == "r") or (ttt.curPlayer == 2 and player2Name.lower() == "r"):
-                    print(ttt.moveHistory)
-                if repeatGames < 2:
-                    print("GAME OVER")
-                    print("Player " + str(ttt.curPlayer) + " wins.")
-                    print(ttt.drawTheBoard())
-                print("game#:", sum(seriesResults))
-                print("Number of calls to the minimax algorithm for this game:", ttt.masterFC)
-                print(ttt.moveHistory)
-                print("winner:", ttt.winnerVar, "\n\n")
+                # if (ttt.curPlayer == 1 and player1Name.lower() == "r") or (ttt.curPlayer == 2 and player2Name.lower() == "r"):
+                #     print(ttt.moveHistory)
+                print("\nGAME OVER")
+                print("Winner: Player", ttt.winnerVar)
+                print("Number of minimax calls for game #", sum(seriesResults), ": ", ttt.masterFC, sep="")
+                print("Move History:", ttt.moveHistory)
+                print("Final Board:\n", ttt.drawTheBoard(), "\n", sep="")
                 totalFC += ttt.masterFC
                 del ttt
                 break
-            #toggle player
+            #alternate player
             ttt.curPlayer = ttt.curPlayer % 2 + 1
-    print("Final series results:  ", seriesResults[0], "ties,  ", seriesResults[1], "Player1 wins,  ", seriesResults[2], "Player2 wins.")
-    print("Total Number of calls to the minimax algorithm for all games:", totalFC)
+    if repeatGames > 1:
+        print("Final series results:  ", seriesResults[0], "ties,  ", seriesResults[1], "Player1 wins,  ", seriesResults[2], "Player2 wins.")
+        print("Total Number of calls to the minimax algorithm for all games:", totalFC)
 main()
-# [5, 4, 6, 0, 8, 2, 7]
+
